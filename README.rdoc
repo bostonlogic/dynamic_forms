@@ -28,7 +28,7 @@ Run the generator:
 
   script/generate dynamic_forms
 
-The generator will generate a migration,a bunch of models, a default locale file (see internationalization section) and a configuration initializer (see configuration section).  
+The generator will generate a migration,a bunch of models, a default locale file (see internationalization section) and a configuration initializer (see configuration section).
 The model files will just have includes to modules that are in the lib directory of the plugin.
 The generator also adds a routes definition to the 'config/routes.rb' file as the very top route.  You should see:
 
@@ -42,6 +42,8 @@ Install the public assets (only Prototype JS support for now, soon to add jQuery
 
 The rake task will install JS into 'public/javascripts/dynamic_forms/dynamic_forms_prototype.js' and 1 image for the drag and drop sorting into
 'public/images/dynamic_forms/arrow_move.png'.
+
+Also make sure to include dyamic_forms/dynamic_forms.js in your application javascript manifest
 
 Also, the rake task only copies the files if they are not already there, so if you have modified the JS but want the original back you must delete the file and then re-run the rake task
 
@@ -66,9 +68,9 @@ To associate a form with its creator add the active record mixin is_form_creator
 
   class User < ActiveRecord::Base
     # other stuff
-    
+
     is_form_creator
-    
+
     # other stuff
   end
 
@@ -85,9 +87,9 @@ To associate a form_submission with its submitter add the AR mixin is_form_submi
 
   class User < ActiveRecord::Base
     # other stuff
-    
+
     is_form_submitter
-    
+
     # other stuff
   end
 
@@ -188,7 +190,7 @@ which defines the following:
       :only => [:index, :show, :new, :create]
   end
 
-You can see that the controllers are in the DynamicForms namespace.  This means overriding them is pretty easy.  
+You can see that the controllers are in the DynamicForms namespace.  This means overriding them is pretty easy.
 All you need to do is create a new controller that is a subclass of a DyanmicForms controller.  For Example:
 
   class FormsController < DynamicForms::FormsController
@@ -200,19 +202,19 @@ All you need to do is create a new controller that is a subclass of a DyanmicFor
   end
 
 And then you must add a new route definition above the dyanmic forms generated route in your routes file as any routes defined first take precedence.
-  
+
   map.resources :forms, :controller => 'forms'
   DynamicForms::Routes.draw(map)
 
 You will most likely be doing this controller overriding so that you can set creator and submitter values for forms and form_submissions
-(see the section on relationships) as I have not presupposed any of this functionality, I have made it easier though with polymorphic associations 
+(see the section on relationships) as I have not presupposed any of this functionality, I have made it easier though with polymorphic associations
 so you can you any models you would like.
 The good news is that you only need to have the actions that you need to override in your subclassed controller.
 
 
 === Views
 
-To change the views (which will need to happen in almost every case), 
+To change the views (which will need to happen in almost every case),
 just copy the view folder that you want out of vendor/plugins/dyamic_forms/app/views and put it in app/views.
 
 You don't have to change every view either, you could only copy the views that you plan on changing.
@@ -222,17 +224,17 @@ You don't have to change every view either, you could only copy the views that y
 
 === Models
 
-The models that are generated have all of the functionality included in through a module.  
+The models that are generated have all of the functionality included in through a module.
 This means that to change functionality should just be a matter of overriding that method in the generated model file.
 For example, if you always want to include a blank option on a select no matter if the field is required or not you could do the following:
 
   class FormField::Select < FormField
     include DynamicForms::Models::FieldTypes::Select
-    
+
     def field_helper_options
       {:include_blank => true}
     end
-    
+
   end
 
 
