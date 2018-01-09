@@ -32,9 +32,5 @@ module DynamicForms
     end
 
     ActiveRecord::Base.send(:include, DynamicForms::Relationships)
-
-    ActionView::Helpers::AssetTagHelper.register_javascript_expansion :dynamic_forms_prototype => [
-     '/javascripts/dynamic_forms/dynamic_forms_prototype'
-    ]
   end
 end
