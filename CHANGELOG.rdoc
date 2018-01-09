@@ -1,6 +1,6 @@
 == (01/09/18)
  * update scopes in for Form and FormField to work for Rails4
- * Update engine to precompile dynamic_forms.js
+ * Remove references to dynamic_forms_prototype.js
  * version bump/tag to 0.1.0 for Rails4
 
 == (1/05/17)

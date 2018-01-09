@@ -32,7 +32,5 @@ module DynamicForms
     end
 
     ActiveRecord::Base.send(:include, DynamicForms::Relationships)
-
-    config.assets.precompile += %w(dynamic_forms/dynamic_forms_prototype.js)
   end
 end
