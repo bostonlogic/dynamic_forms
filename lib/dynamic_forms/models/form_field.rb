@@ -31,8 +31,8 @@ module DynamicForms
                        :class_name => "::Form"
 
             has_many :form_field_options,
-                     :class_name => "::FormFieldOption",
-                     :order => 'position ASC, label ASC'
+                     -> { order('position ASC, label ASC') },
+                     :class_name => "::FormFieldOption"
           end
         end
       end
