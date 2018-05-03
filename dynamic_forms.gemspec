@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.summary = "Rails engine to allow your users to build their own forms in your app.."
   s.description = "Rails engine to allow your users to build their own forms in your app."
   s.files = Dir["{app,lib,config}/**/*"] + ["MIT-LICENSE", "Rakefile", "Gemfile", "README.rdoc"]
-  s.version = "0.0.7"
+  s.version = "0.0.8"
 
   s.add_development_dependency "rails", "3.0.20"
   s.add_development_dependency "sqlite3"
