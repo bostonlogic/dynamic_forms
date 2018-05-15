@@ -47,34 +47,6 @@ module DynamicForms
                      -> { order('position ASC')} ,
                      :dependent => :destroy,
                      :class_name => "::FormField"
-
-            has_many :form_submissions,
-                     -> { order('created_at DESC') },
-                     :class_name => "::FormSubmission",
-                     :dependent => :destroy do
-              # Takes the pain out of creating a form submission object!
-              # @submission = form.form_submissions.submit(params[:form_submission])
-              # --
-              # Author:: Jacob Basham, Killswitch Collective 12-19-2008
-              # ++
-              def submit(attributes, throw_error = false)
-                submission = proxy_owner.form_submissions.build
-                attributes.each_pair do |method_name, value|
-                  submission.send("#{method_name}=".to_sym, value)
-                end
-                submission.send(throw_error ? :save! : :save)
-                return submission
-              end
-
-              # Just like #submit, but raises an error
-              # --
-              # Author:: Jacob Basham, Killswitch Collective 12-19.2008
-              # ++
-              def submit!(attributes)
-                return self.submit(attributes, true)
-              end
-
-            end
           end
         end
       end
