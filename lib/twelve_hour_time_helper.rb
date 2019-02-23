@@ -13,7 +13,8 @@ module ActionView
         end
       end
       
-      alias_method_chain :select_hour, :twelve_hour_time
+      alias_method :select_hour_without_twelve_hour_time, :select_hour
+      alias_method :select_hour, :select_hour_with_twelve_hour_time
       
       private
       

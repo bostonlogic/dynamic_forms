@@ -11,7 +11,8 @@ module DynamicForms
           serialize :data, Hash
           attr_accessor :datetime_temps
 
-          alias_method_chain :valid?, :dynamic_validation
+          alias_method :valid_without_dynamic_validation?, :valid?
+          alias_method :valid?, :valid_with_dynamic_validation?
 
           before_validation :set_datetime_values
 
