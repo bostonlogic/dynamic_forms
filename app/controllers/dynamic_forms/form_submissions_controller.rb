@@ -1,7 +1,7 @@
 class DynamicForms::FormSubmissionsController < ApplicationController
   unloadable
 
-  before_filter :load_form
+  before_action :load_form
 
   def index
     @form_submissions = @form.form_submissions
