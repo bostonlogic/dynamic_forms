@@ -115,15 +115,15 @@ module DynamicForms
     end
     
     def is_valid_date?
-      Date.parse(answer.to_s)
+      Date.parse(answer.to_s) rescue false
     end
     
     def is_valid_datetime?
-      DateTime.parse(answer.to_s)
+      DateTime.parse(answer.to_s) rescue false
     end
     
     def is_valid_time?
-      Time.parse(answer.to_s)
+      Time.parse(answer.to_s) rescue false
     end
     
     def add_error_to_submission(msg)
