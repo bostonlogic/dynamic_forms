@@ -14,7 +14,7 @@ module DynamicForms
         model.send(:include, DynamicForms::DynamicValidations)
 
         model.class_eval do
-          serialize :validations, type: Hash
+          serialize :validations, coder: YAML, type: Hash
 
           eval "serialized_validation_attr_accessor #{DynamicForms.configuration.validation_types.collect{|t| ":#{t}"}.join(', ')}"
 

@@ -8,7 +8,7 @@ module DynamicForms
         model.send(:include, Relationships)
 
         model.class_eval do
-          serialize :data, type: Hash
+          serialize :data, coder: YAML, type: Hash
           attr_accessor :datetime_temps
 
           after_initialize :init_defaults
