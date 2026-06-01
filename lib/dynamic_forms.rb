@@ -29,8 +29,7 @@ module DynamicForms
       ApplicationController.helper(DynamicForms::RadioButtonSelectHelper)
       ApplicationController.helper(DynamicForms::FormsHelper)
       ApplicationController.helper(DynamicForms::FormSubmissionsHelper)
+      ActiveRecord::Base.include(DynamicForms::Relationships)
     end
-
-    ActiveRecord::Base.send(:include, DynamicForms::Relationships)
   end
 end

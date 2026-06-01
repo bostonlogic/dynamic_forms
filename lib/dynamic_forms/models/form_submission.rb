@@ -8,14 +8,11 @@ module DynamicForms
         model.send(:include, Relationships)
 
         model.class_eval do
-          serialize :data, Hash
+          serialize :data, type: Hash
           attr_accessor :datetime_temps
 
-          alias_method :valid_without_dynamic_validation?, :valid?
-          alias_method :valid?, :valid_with_dynamic_validation?
-
+          after_initialize :init_defaults
           before_validation :set_datetime_values
-
           before_save :save_file_uploads
         end
       end
@@ -37,28 +34,24 @@ module DynamicForms
 
       module InstanceMethods
 
-        def before_create
-          @initialized = false
-        end
-
-        def after_initialize
+        def init_defaults
           @initialized = true
           self.data ||= {}
           self.datetime_temps ||= []
         end
 
         def initialized?
-          return @initialized
+          @initialized == true
         end
 
         def field_keys
           self.form ? self.form.form_fields.map(&:name) : []
         end
 
-        def valid_with_dynamic_validation?(options)
-          valid_without_dynamic_validation?
-          self.form.form_fields.each { |ff| ff.validate_submission(self) }
-          return self.errors.blank?
+        def valid?(context = nil)
+          super(context)
+          self.form&.form_fields&.each { |ff| ff.validate_submission(self) }
+          self.errors.empty?
         end
 
         # Developed by Chris Powers, Killswitch Collective on 10/22/2008
@@ -97,6 +90,21 @@ module DynamicForms
           end
         end
 
+        # Builds a callstack from multiparameter attribute pairs and resolves date/time values.
+        # Replaces the Rails private assign_multiparameter_attributes to avoid depending on internals.
+        def assign_multiparameter_attributes(pairs)
+          callstack = {}
+          pairs.each do |name, value|
+            if name =~ /^([^\(]+)\((\d+)[if]?\)$/
+              field_name = $1
+              position   = $2.to_i
+              callstack[field_name] ||= []
+              callstack[field_name][position - 1] = value.blank? ? nil : value.to_i
+            end
+          end
+          execute_callstack_for_multiparameter_attributes(callstack)
+        end
+
         # Very simplified version of the ActiveRecord::Base method that handles only dates/times
         def execute_callstack_for_multiparameter_attributes(callstack)
           attributes = {}
@@ -109,7 +117,7 @@ module DynamicForms
                   t = Time.new
                   no_blank_values?(values) ? Time.local(t.year, t.month, t.day, values[0], values[1], 0, 0) : nil
                 when 5
-                  no_blank_values?(values) ? Time.time_with_datetime_fallback(:local, *values) : nil
+                  no_blank_values?(values) ? Time.local(*values) : nil
                 when 3
                   no_blank_values?(values) ? Date.new(*values) : nil
                 else
@@ -136,8 +144,8 @@ module DynamicForms
         # ++
         def method_missing(method_name, *args, &block)
 
-          if (!(self.initialized?))
-            self.after_initialize
+          unless self.initialized?
+            self.init_defaults
           end
 
           name = method_name.to_s

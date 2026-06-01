@@ -27,7 +27,7 @@ class DynamicForms::FormsController < ApplicationController
     # check to see if preview should be rendered rather than saving changes
     preview_new and return if params[:commit].to_s.downcase == 'preview'
 
-    @form = ::Form.new(params[:form])
+    @form = ::Form.new(form_params)
     if @form.save
       flash[:success] = translate(:form_created, :scope => [:dynamic_forms, :controllers, :forms], :name => @form.name)
       redirect_to form_path(@form)
@@ -42,7 +42,7 @@ class DynamicForms::FormsController < ApplicationController
 
     @form = ::Form.find(params[:id])
 
-    if @form.update_attributes(params[:form])
+    if @form.update(form_params)
       flash[:success] = translate(:form_updated, :scope => [:dynamic_forms, :controllers, :forms], :name => @form.name)
       redirect_to form_path(@form)
     else
@@ -59,8 +59,18 @@ class DynamicForms::FormsController < ApplicationController
 
   private
 
+  def form_params
+    params.require(:form).permit(
+      :name, :submit_label, :email, :email_submissions, :instructions, :confirmation, :active,
+      form_fields_attributes: [
+        :id, :label, :type, :sti_type, :position, :_destroy,
+        form_field_options_attributes: [:id, :label, :value, :position, :_destroy]
+      ]
+    )
+  end
+
   def preview_new
-    @form = ::Form.new(params[:form])
+    @form = ::Form.new(form_params)
     if @form.valid?
       @form_submission = @form.form_submissions.build
       @form_submission.form = @form # Believe it or not, this is necessary
@@ -69,7 +79,7 @@ class DynamicForms::FormsController < ApplicationController
   end
 
   def preview_edit
-    @form = ::Form.new(params[:form])
+    @form = ::Form.new(form_params)
     @form.id = params[:id]
     if @form.valid?
       @form_submission = @form.form_submissions.build
