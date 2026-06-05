@@ -1,6 +1,4 @@
 class DynamicForms::FormsController < ApplicationController
-  unloadable
-
   def index
     @forms = ::Form.paginate(:page => params[:page] || 1)
     render :template => "forms/index"

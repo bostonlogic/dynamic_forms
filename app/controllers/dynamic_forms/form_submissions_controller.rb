@@ -1,6 +1,4 @@
 class DynamicForms::FormSubmissionsController < ApplicationController
-  unloadable
-
   before_action :load_form
 
   def index
